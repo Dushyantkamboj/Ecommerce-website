@@ -248,8 +248,15 @@ const AdminLogin = () => {
           </div>
         </div>
 
-  
-        <div className="absolute bottom-8 left-0 w-full text-center text-[9px] tracking-[0.2em] text-indigo-200">
+        <div className="relative z-10 mt-10 flex justify-center">
+          <img
+            src="/workspace-illustration.svg"
+            alt="Workspace Illustration"
+            className="w-full max-w-md select-none"
+          />
+        </div>
+
+        <div className="absolute bottom-3 left-0 w-full text-center text-[9px] tracking-[0.2em] text-indigo-200">
           BUILT FOR BETTER STORE MANAGEMENT
         </div>
       </div>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 210" fill="none" role="img" aria-label="Workspace illustration">
+  <defs>
+    <linearGradient id="deskTop" x1="30" y1="150" x2="570" y2="150" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#26364F" />
+      <stop offset="1" stop-color="#1B2940" />
+    </linearGradient>
+    <linearGradient id="deskEdge" x1="60" y1="178" x2="540" y2="178" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#13203A" />
+      <stop offset="1" stop-color="#0D1830" />
+    </linearGradient>
+    <linearGradient id="screen" x1="172" y1="64" x2="298" y2="136" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1426" />
+      <stop offset="1" stop-color="#131F38" />
+    </linearGradient>
+  </defs>
+
+  <!-- soft shadow -->
+  <ellipse cx="300" cy="188" rx="248" ry="11" fill="#020617" opacity="0.6" />
+
+  <!-- desk -->
+  <path d="M30 150 H570 L540 178 H60 Z" fill="url(#deskTop)" />
+  <path d="M60 178 H540 L530 187 H70 Z" fill="url(#deskEdge)" />
+
+  <!-- blue notebook / ruler on the left -->
+  <rect x="74" y="130" width="64" height="9" rx="4.5" fill="#3B82F6" />
+  <path d="M138 135 L166 141" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" />
+
+  <!-- laptop screen -->
+  <rect x="165" y="56" width="140" height="86" rx="7" fill="#334155" />
+  <rect x="172" y="63" width="126" height="72" rx="3" fill="url(#screen)" />
+  <path d="M224 94 L242 83 L249 94 L231 105 Z" fill="#3B82F6" />
+  <circle cx="235" cy="131" r="1.6" fill="#64748B" />
+
+  <!-- laptop base -->
+  <path d="M150 142 H320 L334 153 H136 Z" fill="#475569" />
+  <path d="M136 153 H334 L330 157 H140 Z" fill="#334155" />
+
+  <!-- coffee mug -->
+  <rect x="340" y="107" width="46" height="39" rx="7" fill="#F8FAFC" />
+  <path d="M386 116 H393 A10 10 0 0 1 393 136 H386" stroke="#F8FAFC" stroke-width="7" stroke-linecap="round" />
+  <path d="M349 114 C352 111 357 111 360 114" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" />
+
+  <!-- plant pot -->
+  <path d="M418 137 H448 L444 160 H422 Z" fill="#F8FAFC" />
+  <path d="M416 135 H450 V140 H416 Z" fill="#E2E8F0" />
+
+  <!-- plant stem and leaves -->
+  <path d="M433 137 C433 112 433 96 433 78" stroke="#34D399" stroke-width="4" stroke-linecap="round" />
+  <path d="M433 106 C414 98 410 82 418 68 C433 74 439 90 433 106 Z" fill="#34D399" />
+  <path d="M433 106 C452 98 456 82 448 68 C433 74 427 90 433 106 Z" fill="#2DD4BF" />
+</svg>
