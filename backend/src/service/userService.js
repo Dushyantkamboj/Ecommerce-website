@@ -232,6 +232,7 @@ export const user_history_service = async (payload) => {
       where: {
         user_id: payload.userId,
         is_deleted: false,
+        status: true,
       },
       include: [
         {

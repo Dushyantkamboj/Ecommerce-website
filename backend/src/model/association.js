@@ -2,6 +2,7 @@ import { User } from "./user.js";
 import { Product } from "./product.js";
 import { order } from "./order.js";
 import { order_item } from "./orderItem.js";
+import { payment } from "./payment.js";
 
 User.hasMany(order, {
   foreignKey: "user_id",
@@ -31,4 +32,14 @@ Product.hasMany(order_item, {
 order_item.belongsTo(Product, {
   foreignKey: "product_id",
   as: "product",
+});
+
+order.hasOne(payment, {
+  foreignKey: "order_id",
+  as: "payment",
+});
+
+payment.belongsTo(order, {
+  foreignKey: "order_id",
+  as: "order",
 });

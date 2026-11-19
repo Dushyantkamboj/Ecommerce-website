@@ -1,4 +1,3 @@
-
 import Joi from "joi";
 
 export const add_product_schema = Joi.object({

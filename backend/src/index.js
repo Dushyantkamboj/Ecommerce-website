@@ -1,4 +1,3 @@
-
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -7,6 +6,7 @@ import path from 'path';
 import { userRoute } from './route/userRoute.js';
 import { adminRoute } from './route/adminRoute.js';
 import { productRoute } from './route/productRoute.js';
+import { paymentRoute } from './route/paymentRoute.js';
 import "./model/association.js";
 
 const app = express();
@@ -29,6 +29,7 @@ app.use(
 app.use(`/${api_v1}/admin`, adminRoute);
 app.use(`/${api_v1}/user`, userRoute);
 app.use(`/${api_v1}/product`, productRoute);
+app.use(`/${api_v1}/payment`, paymentRoute);
 
 app.get(`/${api_v1}`, (req, res) => {
   res.send('Hello world');

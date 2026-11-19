@@ -161,6 +161,7 @@ export const admin_list_product_service = async () => {
     const history = await order.findAll({
       where: {
         is_deleted: false,
+        status: true,
       },
       include: [
         {

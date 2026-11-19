@@ -16,16 +16,17 @@ import {
 const PaymentSuccessful = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const[orderId,setorderId]=useState()
-  const[totalAmount,settotalAmount]=useState()
-
-  const token=Cookies.get('accessToken')
-
-  // Optional details passed from checkout
+  // Details returned after the Razorpay payment was verified on the server.
   const order = location.state?.order || {};
-//   const orderId = order.order_id || order.id || "Confirmed";
-//   const totalAmount = order.total_amount ?? order.totalAmount ?? 0;
-  const paymentMethod = order.payment_method || "Online Payment";
+
+  const [orderId, setorderId] = useState(order.id || order.order_id || null);
+  const [totalAmount, settotalAmount] = useState(
+    order.total_amount ?? order.totalAmount ?? 0
+  );
+
+  const token = Cookies.get("accessToken");
+
+  const paymentMethod = order.payment_method || "Razorpay";
 
   const paymentDate = new Date().toLocaleString("en-IN", {
     day: "2-digit",
@@ -35,36 +36,33 @@ const PaymentSuccessful = () => {
     minute: "2-digit",
   });
 
-  const handleResult=async()=>{
+  // Fallback for a page refresh: load the latest confirmed order.
+  const handleResult = async () => {
+    if (orderId) return;
+
     try {
-        const response=await axios.get('http://localhost:3000/api_v1/product/listproductdetails',
-            {
-                headers:{
-                    Authorization:`Bearer ${token}`
-                }
-            }
-        )
+      const response = await axios.get(
+        "http://localhost:3000/api_v1/product/listproductdetails",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-        // console.log('response:',response);
+      const result = response.data?.data;
 
-        const result=response.data.data;
-
-        console.log('result:',result);
-
-       setorderId(result.id)
-
-       settotalAmount(result.total_amount)
-
-
-        
+      if (result?.id) {
+        setorderId(result.id);
+        settotalAmount(result.total_amount);
+      }
     } catch (error) {
-        
-        console.log('error:',error);
+      console.error("Unable to load order details:", error);
     }
-  }
+  };
 
   useEffect(() => {
-    handleResult()
+    handleResult();
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
@@ -130,6 +128,14 @@ const PaymentSuccessful = () => {
               label="Payment Method"
               value={paymentMethod}
             />
+
+            {order.payment_id && (
+              <DetailRow
+                icon={<CreditCard />}
+                label="Payment ID"
+                value={order.payment_id}
+              />
+            )}
 
             <DetailRow
               icon={<CalendarDays />}

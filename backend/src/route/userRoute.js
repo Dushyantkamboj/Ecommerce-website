@@ -13,7 +13,7 @@ router.get('/list',list_product_controller);
 router.get('/profile',authentication,user_profile_controller);
 router.patch('/update',validation(update_password_schema,"body"),authentication, update_password_controller);
 
-router.get('/history',authentication,user_history_controller)
-router.get('/listcoupon',authentication,list_Coupon_Controller)
+router.get('/history',authentication,user_history_controller);
+router.get('/listcoupon',authentication,list_Coupon_Controller);
 
 export {router as userRoute}

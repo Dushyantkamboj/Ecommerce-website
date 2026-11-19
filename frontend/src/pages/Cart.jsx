@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { userContext } from "../context/userContext";
 import Navbar from "../component/Navbar";
+import { loadRazorpayScript } from "../utils/razorpay";
 import {
   ShoppingBag,
   Trash2,
@@ -23,7 +24,12 @@ import {
 
 const API_URL = "http://localhost:3000/api_v1/user/list";
 const COUPON_API_URL = "http://localhost:3000/api_v1/user/listcoupon";
-const BUYING_API_URL = "http://localhost:3000/api_v1/product/buying";
+const CREATE_PAYMENT_API_URL =
+  "http://localhost:3000/api_v1/payment/create-order";
+const VERIFY_PAYMENT_API_URL =
+  "http://localhost:3000/api_v1/payment/verify";
+const FAIL_PAYMENT_API_URL =
+  "http://localhost:3000/api_v1/payment/failed";
 const SERVER_URL = "http://localhost:3000";
 
 const Cart = () => {
@@ -294,6 +300,129 @@ const Cart = () => {
     setproductIds(Object.keys(cart || {}).map(Number));
   }, [cart, totalItems, setCount, setproductIds]);
 
+  // Opens the Razorpay checkout modal and verifies the payment on our server.
+  const startRazorpayPayment = async (paymentOrder, token) => {
+    const scriptLoaded = await loadRazorpayScript();
+
+    if (!scriptLoaded) {
+      alert("Unable to load Razorpay checkout. Please check your connection.");
+      setProcessing(false);
+      return;
+    }
+
+    let paymentCompleted = false;
+
+    const options = {
+      key: paymentOrder.key,
+      amount: paymentOrder.amount,
+      currency: paymentOrder.currency,
+      name: "E-Commerce Store",
+      description: `Order #${paymentOrder.order_reference}`,
+      order_id: paymentOrder.order_id,
+      prefill: {
+        name: Cookies.get("name") || "",
+        email: Cookies.get("email") || "",
+      },
+      notes: {
+        order_id: String(paymentOrder.order_reference),
+      },
+      theme: {
+        color: "#4f46e5",
+      },
+      handler: async (paymentResponse) => {
+        paymentCompleted = true;
+
+        try {
+          const verification = await axios.post(
+            VERIFY_PAYMENT_API_URL,
+            {
+              order_id: paymentOrder.order_reference,
+              razorpay_order_id: paymentResponse.razorpay_order_id,
+              razorpay_payment_id: paymentResponse.razorpay_payment_id,
+              razorpay_signature: paymentResponse.razorpay_signature,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (verification.data?.status === 1) {
+            setCart({});
+            setCount(0);
+            setproductIds([]);
+
+            navigate("/paymentsuccessful", {
+              replace: true,
+              state: {
+                order: {
+                  id: paymentOrder.order_reference,
+                  total_amount: verification.data?.data?.amount,
+                  payment_method: "Razorpay",
+                  payment_id: verification.data?.data?.payment_id,
+                },
+              },
+            });
+          } else {
+            alert(
+              verification.data?.message ||
+                "Payment verification failed. Please contact support."
+            );
+            setProcessing(false);
+          }
+        } catch (error) {
+          console.error(
+            "Payment verification error:",
+            error.response?.data || error.message
+          );
+          alert(
+            error.response?.data?.message ||
+              "Payment could not be verified. Please contact support."
+          );
+          setProcessing(false);
+        }
+      },
+      modal: {
+        ondismiss: () => {
+          if (!paymentCompleted) setProcessing(false);
+        },
+      },
+    };
+
+    const razorpay = new window.Razorpay(options);
+
+    razorpay.on("payment.failed", async (failure) => {
+      try {
+        await axios.post(
+          FAIL_PAYMENT_API_URL,
+          {
+            order_id: paymentOrder.order_reference,
+            razorpay_payment_id: failure?.error?.payment_id || null,
+            reason: failure?.error?.description || null,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Unable to record failed payment:", error);
+      }
+
+      alert(
+        failure?.error?.description ||
+          "Your payment failed. Please try again."
+      );
+      setProcessing(false);
+    });
+
+    razorpay.open();
+  };
+
   // Checkout
   const handleCheckout = async () => {
     const token = Cookies.get("accessToken");
@@ -318,10 +447,7 @@ const Cart = () => {
     const invalidProduct = cartProducts.find((product) => {
       const stock = Number(product.stock ?? 0);
 
-      return (
-        product.cartQuantity > stock ||
-        product.cartQuantity < 1
-      );
+      return product.cartQuantity > stock || product.cartQuantity < 1;
     });
 
     if (invalidProduct) {
@@ -341,23 +467,21 @@ const Cart = () => {
     setProcessing(true);
 
     try {
-const checkoutData = {
-  items: cartProducts.map((product) => ({
-    product_id: Number(product.id),
-    quantity: Number(product.cartQuantity),
-  })),
+      const checkoutData = {
+        items: cartProducts.map((product) => ({
+          product_id: Number(product.id),
+          quantity: Number(product.cartQuantity),
+        })),
 
-  coupon_code: selectedCoupon?.code || null,
+        coupon_code: selectedCoupon?.code || null,
 
-  // Coupon discount amount
-  discount_amount: Number(couponDiscount.toFixed(2)),
-
-  // Final amount after applying coupon and delivery charges
-  total_amount: Number(finalTotal.toFixed(2)),
-};
+        // The server recalculates and validates these amounts.
+        discount_amount: Number(couponDiscount.toFixed(2)),
+        total_amount: Number(finalTotal.toFixed(2)),
+      };
 
       const response = await axios.post(
-        BUYING_API_URL,
+        CREATE_PAYMENT_API_URL,
         checkoutData,
         {
           headers: {
@@ -368,17 +492,10 @@ const checkoutData = {
       );
 
       if (response.data?.status === 1) {
-        navigate("/paymentsuccessful", {
-          replace: true,
-          state: {
-            order: response.data.data,
-          },
-        });
+        await startRazorpayPayment(response.data.data, token);
       } else {
-        alert(
-          response.data?.message ||
-            "Unable to complete your order."
-        );
+        alert(response.data?.message || "Unable to start payment.");
+        setProcessing(false);
       }
     } catch (err) {
       console.error(
@@ -390,7 +507,6 @@ const checkoutData = {
         err.response?.data?.message ||
           "Checkout failed. Please try again."
       );
-    } finally {
       setProcessing(false);
     }
   };
@@ -904,11 +1020,11 @@ const checkoutData = {
 
                   <div className="rounded-xl bg-slate-50 p-3 text-xs leading-5 text-slate-500">
                     <p className="font-bold text-slate-700">
-                      Payment information
+                      Secure payments by Razorpay
                     </p>
-                    This demo does not collect payment details or charge
-                    your account. A payment gateway must be connected to
-                    accept real payments.
+                    You will be redirected to Razorpay to complete your
+                    payment. Your order is confirmed only after the payment
+                    is verified.
                   </div>
 
                   <button

@@ -25,7 +25,8 @@ A full-stack e-commerce web application built using React, Node.js, Express.js, 
 - **Discounted Pricing:** View original prices, discounted prices, and savings.
 - **Coupon Application:** Apply eligible coupons during checkout.
 - **Checkout:** Review cart items, discounts, and the payable amount before placing an order.
-- **Order Placement:** Complete a purchase and view the order success page.
+- **Razorpay Payments:** Pay securely through Razorpay with server-side amount calculation and signature verification.
+- **Order Placement:** Orders are confirmed only after a verified payment, then the success page is shown.
 - **Purchase History:** View previous orders and purchased products.
 - **Profile Management:** Access customer profile information and account features.
 
@@ -49,6 +50,7 @@ A full-stack e-commerce web application built using React, Node.js, Express.js, 
 - bcrypt password hashing
 - Joi validation
 - Multer for file uploads
+- Razorpay Node SDK for payment orders
 - dotenv for environment configuration
 
 ### Database
@@ -92,6 +94,18 @@ Main entities include:
 
 The exact tables and fields depend on the current database models and migrations.
 
+## 💳 Razorpay Payment Flow
+
+1. The customer clicks **Proceed to Checkout** in the cart.
+2. `POST /api_v1/payment/create-order` recalculates item prices, product discounts, delivery charges, and coupon discount on the server.
+3. The backend creates a Razorpay order, saves a pending order and its items, and returns the Razorpay order id and public key id.
+4. The browser opens the Razorpay checkout modal with that order id.
+5. On success, `POST /api_v1/payment/verify` verifies the `razorpay_signature` using HMAC-SHA256, marks the order as paid, reduces stock, and updates coupon usage.
+6. On failure, `POST /api_v1/payment/failed` marks the pending order as failed so it never appears in purchase history.
+7. The cart is cleared and the customer is taken to the payment success page.
+
+No order is marked as paid until the signature check passes. The `/api_v1/product/buying` endpoint is kept only for backwards compatibility and now also starts the Razorpay flow.
+
 ## ⚙️ Installation and Setup
 
 ### Prerequisites
@@ -132,9 +146,20 @@ DB_USER=root
 DB_PASSWORD=
 
 JWT_SECRET=replace_with_a_secure_random_secret
+
+RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxxxx
+RAZORPAY_KEY_SECRET=replace_with_your_razorpay_key_secret
 ```
 
-Use the exact environment variable names expected by your backend configuration. Add any other required variables, such as an email configuration, if those features are enabled.
+Use the exact environment variable names expected by your backend configuration. Add any other required variables, such as an email configuration, if those features are enabled. Copy `backend/.env.example` to `backend/.env` and fill in your values.
+
+Create a `.env` file in the frontend root (or copy `frontend/.env.example`):
+
+```env
+VITE_RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxxxx
+```
+
+The frontend key id is public. The key secret must only exist in the backend `.env` and must never be exposed to the browser.
 
 ### 3. Set up the database
 

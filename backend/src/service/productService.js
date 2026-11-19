@@ -308,6 +308,11 @@ export const list_product_details_service=async(payload)=>{
     }
 
 const data = await order.findOne({
+  where: {
+    user_id: payload.userId,
+    status: true,
+    is_deleted: false,
+  },
   order: [["id", "DESC"]],
 });
 
