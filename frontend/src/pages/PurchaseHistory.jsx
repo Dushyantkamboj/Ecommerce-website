@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -16,8 +17,8 @@ import {
   ShoppingCart,
 } from "lucide-react";
 
-const API_URL = "http://localhost:3000/api_v1/user/history";
-const SERVER_URL = "http://localhost:3000";
+const API_URL = `${API_BASE_URL}/api_v1/user/history`;
+const SERVER_URL = `${API_BASE_URL}`;
 
 const formatPrice = (amount) =>
   `₹${Number(amount ?? 0).toLocaleString("en-IN", {

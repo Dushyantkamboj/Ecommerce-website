@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -35,7 +36,7 @@ import {
   Activity,
 } from "lucide-react";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = `${API_BASE_URL}`;
 const PRODUCT_URL = `${BASE_URL}/api_v1/product/list`;
 
 const money = (value) =>

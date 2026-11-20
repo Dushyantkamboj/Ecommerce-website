@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from 'js-cookie';
@@ -42,7 +43,7 @@ const PaymentSuccessful = () => {
 
     try {
       const response = await axios.get(
-        "http://localhost:3000/api_v1/product/listproductdetails",
+        `${API_BASE_URL}/api_v1/product/listproductdetails`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

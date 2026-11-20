@@ -156,8 +156,11 @@ Use the exact environment variable names expected by your backend configuration.
 Create a `.env` file in the frontend root (or copy `frontend/.env.example`):
 
 ```env
+VITE_API_URL=https://api.yourdomain.com
 VITE_RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxxxx
 ```
+
+`VITE_API_URL` tells the frontend where the Express backend lives. It defaults to `http://localhost:3000` for local development. When deploying the frontend to Vercel, set it to your public **HTTPS** backend URL.
 
 The frontend key id is public. The key secret must only exist in the backend `.env` and must never be exposed to the browser.
 
@@ -220,6 +223,25 @@ Authentication, registration, checkout, coupon, and discount endpoints depend on
 - Coupon eligibility, usage limits, stock, and order totals must be validated on the backend.
 - Never commit real credentials or private configuration files to Git.
 
+## 🚀 Deploy the frontend on Vercel
+
+The React app can be deployed on Vercel while the Express/MySQL backend keeps running on your Ubuntu server.
+
+1. Push the latest code to GitHub.
+2. In Vercel, choose **Add New → Project** and import `Dushyantkamboj/Ecommerce-website`.
+3. Configure the project:
+   - **Framework Preset:** Vite
+   - **Root Directory:** `frontend`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+4. Add an environment variable:
+   - `VITE_API_URL` = your public backend URL, e.g. `https://api.yourdomain.com`
+5. Click **Deploy**.
+
+`frontend/vercel.json` contains the SPA rewrite so routes like `/adminlogin` and `/cart` work after a page refresh.
+
+> The backend must be served over **HTTPS**. A Vercel site is HTTPS-only, so an `http://` backend URL will be blocked as mixed content. Put the Ubuntu backend behind Nginx with a Let's Encrypt certificate, or move it to a host that provides HTTPS.
+
 ## 📁 Project Structure
 
 ```text
@@ -265,11 +287,10 @@ The goal of this project is to develop a full-stack e-commerce application while
 
 ## 📌 Future Improvements
 
-- Integrate a real payment gateway.
 - Add order tracking and cancellation.
 - Add product reviews and ratings.
 - Add pagination and advanced search.
-- Add automated tests and deployment.
+- Add automated tests.
 - Improve reporting and sales analytics for administrators.
 
 ## 📄 License

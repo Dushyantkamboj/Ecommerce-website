@@ -1,4 +1,5 @@
 
+import { API_BASE_URL } from "../config";
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -191,7 +192,7 @@ const AddProduct = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:3000/api_v1/product/add",
+        `${API_BASE_URL}/api_v1/product/add`,
         data,
         {
           headers: {

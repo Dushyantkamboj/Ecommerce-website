@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -36,7 +37,7 @@ const Login = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:3000/api_v1/user/login",
+        `${API_BASE_URL}/api_v1/user/login`,
         formData
       );
 

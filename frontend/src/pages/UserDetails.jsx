@@ -1,4 +1,5 @@
 
+import { API_BASE_URL } from "../config";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -18,7 +19,7 @@ import {
   Trash2,
 } from "lucide-react";
 
-const API_URL = "http://localhost:3000/api_v1/admin";
+const API_URL = `${API_BASE_URL}/api_v1/admin`;
 
 const UserDetails = () => {
   const [users, setUsers] = useState([]);

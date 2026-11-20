@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -35,7 +36,7 @@ const AdminLogin = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:3000/api_v1/admin/login",
+        `${API_BASE_URL}/api_v1/admin/login`,
         formData,
       );
 

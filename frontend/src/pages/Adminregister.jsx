@@ -1,4 +1,5 @@
 
+import { API_BASE_URL } from "../config";
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -23,7 +24,7 @@ const Adminregister = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:3000/api_v1/admin/register",
+        `${API_BASE_URL}/api_v1/admin/register`,
         {
           admin_secret_key: adminSecretKey,
         }

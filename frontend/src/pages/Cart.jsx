@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import { useContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -22,15 +23,15 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-const API_URL = "http://localhost:3000/api_v1/user/list";
-const COUPON_API_URL = "http://localhost:3000/api_v1/user/listcoupon";
+const API_URL = `${API_BASE_URL}/api_v1/user/list`;
+const COUPON_API_URL = `${API_BASE_URL}/api_v1/user/listcoupon`;
 const CREATE_PAYMENT_API_URL =
-  "http://localhost:3000/api_v1/payment/create-order";
+  `${API_BASE_URL}/api_v1/payment/create-order`;
 const VERIFY_PAYMENT_API_URL =
-  "http://localhost:3000/api_v1/payment/verify";
+  `${API_BASE_URL}/api_v1/payment/verify`;
 const FAIL_PAYMENT_API_URL =
-  "http://localhost:3000/api_v1/payment/failed";
-const SERVER_URL = "http://localhost:3000";
+  `${API_BASE_URL}/api_v1/payment/failed`;
+const SERVER_URL = `${API_BASE_URL}`;
 
 const Cart = () => {
   const navigate = useNavigate();

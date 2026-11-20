@@ -1,4 +1,5 @@
 
+import { API_BASE_URL } from "../config";
 import { useEffect, useMemo, useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -30,8 +31,8 @@ import {
   Sliders,
 } from "lucide-react";
 
-const API_URL = "http://localhost:3000/api_v1/user/list";
-const SERVER_URL = "http://localhost:3000";
+const API_URL = `${API_BASE_URL}/api_v1/user/list`;
+const SERVER_URL = `${API_BASE_URL}`;
 const PAGE_SIZE = 12;
 
 /* ---------------- HELPERS ---------------- */

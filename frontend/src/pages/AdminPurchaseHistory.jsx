@@ -1,4 +1,5 @@
 
+import { API_BASE_URL } from "../config";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -18,7 +19,7 @@ import {
 } from "lucide-react";
 
 const API_URL =
-  "http://localhost:3000/api_v1/admin/history";
+  `${API_BASE_URL}/api_v1/admin/history`;
 
 const formatPrice = (amount) =>
   `₹${Number(amount ?? 0).toLocaleString("en-IN", {

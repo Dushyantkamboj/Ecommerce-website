@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../config";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
@@ -48,7 +49,7 @@ const Updateproduct = () => {
         setError("");
 
         const response = await axios.get(
-          `http://localhost:3000/api_v1/product/details/${id}`,
+          `${API_BASE_URL}/api_v1/product/details/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -119,7 +120,7 @@ const Updateproduct = () => {
       .replace(/\\/g, "/")
       .replace(/^\/+/, "");
 
-    return `http://localhost:3000/${cleanPath}`;
+    return `${API_BASE_URL}/${cleanPath}`;
   };
 
   // Update image preview when the selected image changes
@@ -238,7 +239,7 @@ const Updateproduct = () => {
       }
 
       const response = await axios.patch(
-        `http://localhost:3000/api_v1/product/update/${id}`,
+        `${API_BASE_URL}/api_v1/product/update/${id}`,
         data,
         {
           headers: {

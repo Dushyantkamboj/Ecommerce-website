@@ -1,4 +1,5 @@
 
+import { API_BASE_URL } from "../config";
 import { useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -86,7 +87,7 @@ const CreateCoupon = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:3000/api_v1/admin/coupon",
+        `${API_BASE_URL}/api_v1/admin/coupon`,
         {
           code: formData.code,
           discountPercentage: discount,

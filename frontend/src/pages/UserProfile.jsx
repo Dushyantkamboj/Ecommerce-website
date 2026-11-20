@@ -1,4 +1,5 @@
 
+import { API_BASE_URL } from "../config";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -19,7 +20,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
-const API_URL = "http://localhost:3000/api_v1/user";
+const API_URL = `${API_BASE_URL}/api_v1/user`;
 
 // PasswordField must stay OUTSIDE UserProfile.
 // This prevents the input from losing focus on each keystroke.
